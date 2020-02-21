@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 from GraphsForResourceToPNG import *
 from GameTimeDemon import *
-#from ResourseTrand import *
+from ResourseTrand import *
+from PlayersAPI import *
 
 app = Flask(__name__, template_folder="templates")
 
@@ -19,43 +20,33 @@ file_handler = logging.FileHandler('log/flask.log', 'w')
 app_log.addHandler(file_handler)
 app_log.setLevel(logging.INFO)
 
-class ResourseTrand():
-    def __init__(self, maximum_price=100, maximum_deviations=10, k=0.5):
-        self.maximum_price = maximum_price
-        self.maximum_deviations = maximum_deviations
-        self.target = random.randint(0, maximum_price)
-        self.current_price = int(self.target/2)
-        self.k = k
-        self.start_demon()
-    def demon(self):
-        while 1:
-            this_day = GameTime.GameDate()
-            self.current_price = (lambda x: int(self.current_price*self.k + (1-self.k)*self.target) if x >=0.8
-                                  else int(self.current_price+(self.current_price*self.maximum_deviations)/random.randrange(-100, 100, 200)))(random.random())
-            if(abs(self.current_price-self.target)/self.target < 0.05):
-                self.target = random.randint(0, maximum_price)
-                self.k = self.k + ((random.random()-0.5)/10)
-                if(abs(self.k) > 0.8): self.k = 0.5
-            while(GameTime.GameDate() == this_day): pass
-    def start_demon(self):
-        demon = threading.Thread(target=self.demon)
-        demon.daemon = True
-        demon.start()
-    def getTrand(self):
-        return self.current_price
-
+def GameTimeTransfer():
+    while 1:
+        Money.SetGameDate(GameTime.GameDate())
+        Wood.SetGameDate(GameTime.GameDate())
+        Rock.SetGameDate(GameTime.GameDate())
 
 GameTime = GameTimeServerClass(k=1024)
 Graphs = GraphsClass(10)
 
-Money = ResourseTrand()
-Wood = ResourseTrand()
-Rock = ResourseTrand()
+Money = ResourseTrand(GameTime.GameDate())
+Wood = ResourseTrand(GameTime.GameDate())
+Rock = ResourseTrand(GameTime.GameDate())
 
-print(str(GameTime.GameTime()))
+Players = PlayersClass()
+
+demon = threading.Thread(target=GameTimeTransfer)
+demon.daemon = True
+demon.start()
 
 @app.route("/")
-def index(): return render_template("index.html")
+def welcome(): return render_template("welcome.html")
+
+@app.route("/start.html")
+def start():
+    GameTime.Start()
+    return render_template("index.html")
+
 @app.route("/middle.html")
 def middle(): return render_template("middle.html")
 @app.route("/left.html")
@@ -68,20 +59,30 @@ def get_market():
     money = Money.getTrand()
     wood = Wood.getTrand()
     rock = Rock.getTrand()
-
-    Graphs.new_element(money, wood, rock, GameTime.GameDateMini())
-
+    Graphs.NewElement(money, wood, rock, GameTime.GameDateMini(), GameTime.GameDate())
     print("MONEY:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(money, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
-
-    return jsonify({"money": str(money),
-                    "wood": str(wood),
-                    "rock": str(rock)})
+    return jsonify({"money": str(money), "wood": str(wood), "rock": str(rock)})
 
 @app.route("/get_graph", methods=["POST"])
-def new_graph(): return jsonify({"graph": str(Graphs.save_new_graphs())})
-
+def new_graph(): return jsonify({"graph": str(Graphs.GetActualGraph())})
 @app.route("/get_gametime", methods=["POST"])
 def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
+
+@app.route("/login", methods=["POST"])
+def Login():
+    login = request.form.get("login")
+    password = request.form.get("password")
+    LoginPlayer = Player(login, password, request.remote_addr)
+    LoginUserWithUniqueName = Players.CheckUserUniquenessName(LoginPlayer)
+
+    if(LoginUserWithUniqueName):
+        Players.append(LoginPlayer)
+        print(Players)
+        return jsonify({"answer": "LOGINOK"})
+    elif(not LoginUserWithUniqueName):
+        LoginUserWithValidationPassword = Players.PasswordValidation(LoginPlayer)
+        if(not LoginUserWithValidationPassword): return jsonify({"answer": open('SystemMessages/NameBusy.txt').read()})
+        else: return jsonify({"answer": "LOGINOK"})
 
 app.run(host='0.0.0.0', port=5001, debug=False)
 

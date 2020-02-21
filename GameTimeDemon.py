@@ -9,12 +9,11 @@ class GameTimeServerClass():
         self.time_start=time_start
         self.k = k
         self.game_time = time_start
-        self.start_demon()
     def demon(self):
         while 1:
             self.game_time = time.time() + (time.time()-self.time_start)*self.k
             time.sleep(0.5)
-    def start_demon(self):
+    def Start(self):
         demon = threading.Thread(target=self.demon)
         demon.daemon = True
         demon.start()
