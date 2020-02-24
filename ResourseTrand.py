@@ -5,10 +5,10 @@
 import time, threading, random
 
 class ResourseTrand():
-    def __init__(self, game_date, maximum_price=100, maximum_deviations=10, k=0.5):
+    def __init__(self, game_date, maximum_price=100, maximum_deviations=10, k=0.2):
         self.maximum_price = maximum_price
         self.maximum_deviations = maximum_deviations
-        self.target = random.randint(0, maximum_price)
+        self.target = random.randint(1, maximum_price)
         self.current_price = int(self.target/2)
         self.k = k
         self.game_date = game_date

@@ -19,7 +19,7 @@ class GraphsClass():
         self.number_of_graphs = 0
         self.len_history = len_history
 
-        self.base = MySQLdb.connect("localhost","platon","maker","WarTrade")
+        self.base = MySQLdb.connect("192.168.32.10","platon","maker","WarTrade")
         self.cursor = self.base.cursor()
         self.cursor.execute("TRUNCATE TABLE ResourcesTrend")
 

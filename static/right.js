@@ -7,7 +7,8 @@
 
         request.onload = () => {
             const data = JSON.parse(request.responseText);
-            document.querySelector('#graph').innerHTML = `<img src="static/graphs/${data.graph}.png" >`;
+            const x = Math.random();
+            document.querySelector('#graph').innerHTML = `<img src="static/graphs/${data.graph}.png?name=${x}" >`;
       }
 
         const data = new FormData();

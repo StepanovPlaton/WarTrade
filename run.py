@@ -2,7 +2,7 @@
 
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, send_file, request, jsonify
+from flask import Flask, render_template, send_file, request, jsonify, send_from_directory
 import os, subprocess, time, threading, subprocess
 import requests, logging, random
 import matplotlib as mpl
@@ -26,7 +26,7 @@ def GameTimeTransfer():
         Wood.SetGameDate(GameTime.GameDate())
         Rock.SetGameDate(GameTime.GameDate())
 
-GameTime = GameTimeServerClass(k=1024)
+GameTime = GameTimeServerClass(k=10000)
 Graphs = GraphsClass(10)
 
 Money = ResourseTrand(GameTime.GameDate())
@@ -54,6 +54,10 @@ def left(): return render_template("left.html")
 @app.route("/right.html")
 def right(): return render_template("right.html")
 
+@app.route('/favicon.ico') 
+def favicon(): 
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route("/get_market", methods=["POST"])
 def get_market():
     money = Money.getTrand()
@@ -66,7 +70,11 @@ def get_market():
 @app.route("/get_graph", methods=["POST"])
 def new_graph(): return jsonify({"graph": str(Graphs.GetActualGraph())})
 @app.route("/get_gametime", methods=["POST"])
-def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
+def get_gametime(): 
+    login = request.form.get("login")
+    password = request.form.get("password")
+    print(login, password)
+    return jsonify({"gametime": GameTime.GameDateTime()})
 
 @app.route("/login", methods=["POST"])
 def Login():
