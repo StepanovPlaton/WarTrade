@@ -9,6 +9,8 @@ class GameTimeServerClass():
         self.time_start=time_start
         self.k = k
         self.game_time = time_start
+
+        self.Start()
     def demon(self):
         while 1:
             self.game_time = time.time() + (time.time()-self.time_start)*self.k

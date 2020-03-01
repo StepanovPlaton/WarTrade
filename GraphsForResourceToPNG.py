@@ -2,10 +2,13 @@
 
 # -*- coding: utf-8 -*-
 
+import base64
+from io import BytesIO
+
 import time, threading
 import random, os, MySQLdb
 import matplotlib as mpl
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt, mpld3
 from pylab import xticks, yticks
 
 class GraphsClass():
@@ -13,7 +16,7 @@ class GraphsClass():
         self.fig = plt.figure()
 
         self.dates = ["Last" for i in range(len_history)]
-        self.money = [0 for i in range(len_history)]
+        self.gold = [0 for i in range(len_history)]
         self.wood = [0 for i in range(len_history)]
         self.rock = [0 for i in range(len_history)]
         self.number_of_graphs = 0
@@ -25,10 +28,10 @@ class GraphsClass():
 
         os.system("rm -f /home/pi/demons/WarTrade/static/graphs/*")
 
-    def NewElement(self, money, wood, rock, DateMini, DateFull):
+    def NewElement(self, gold, wood, rock, DateMini, DateFull):
         if(DateMini != self.dates[len(self.dates)-1]):
-            self.money.append(money)
-            self.money.pop(0)
+            self.gold.append(gold)
+            self.gold.pop(0)
             self.wood.append(wood)
             self.wood.pop(0)
             self.rock.append(rock)
@@ -36,13 +39,13 @@ class GraphsClass():
             self.dates.append(DateMini)
             self.dates.pop(0)
 
-            self.cursor.execute("INSERT INTO ResourcesTrend(date, money, wood, rock) VALUES ('{0}', '{1}', '{2}', '{3}')".format(DateFull, money, wood, rock))
+            self.cursor.execute("INSERT INTO ResourcesTrend(date, gold, wood, rock) VALUES ('{0}', '{1}', '{2}', '{3}')".format(DateFull, gold, wood, rock))
             self.base.commit()
 
             self.number_of_graphs+=1
 
             plt.clf()
-            plt.plot(self.money, color = 'yellow', linestyle = 'solid', label = 'money')
+            plt.plot(self.gold, color = 'orange', linestyle = 'solid', label = 'gold')
             plt.plot(self.wood, color = 'green', linestyle = 'solid', label = 'wood')
             plt.plot(self.rock, color = 'blue', linestyle = 'solid', label = 'rock')
             xticks(range(self.len_history), self.dates)
@@ -50,7 +53,11 @@ class GraphsClass():
             plt.xlabel('Дата')
             plt.ylabel('Цена')
 
-            self.fig.savefig('static/graphs/'+str(self.number_of_graphs)+'.png')
+            #self.fig.savefig('static/graphs/'+str(self.number_of_graphs)+'.png')
     def GetActualGraph(self):
-        return self.number_of_graphs
+        self.buf = BytesIO()
+        self.fig.savefig(self.buf, format="png")
+        self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
+        return self.data
+        #return self.number_of_graphs
 

@@ -22,18 +22,19 @@ app_log.setLevel(logging.INFO)
 
 def GameTimeTransfer():
     while 1:
-        Money.SetGameDate(GameTime.GameDate())
-        Wood.SetGameDate(GameTime.GameDate())
-        Rock.SetGameDate(GameTime.GameDate())
+        Gold.setGameDate(GameTime.GameDate())
+        Wood.setGameDate(GameTime.GameDate())
+        Rock.setGameDate(GameTime.GameDate())
+        Players.setGameDate(GameTime.GameDate())
 
-GameTime = GameTimeServerClass(k=10000)
+GameTime = GameTimeServerClass(k=4096)
 Graphs = GraphsClass(10)
 
-Money = ResourseTrand(GameTime.GameDate())
+Gold = ResourseTrand(GameTime.GameDate())
 Wood = ResourseTrand(GameTime.GameDate())
 Rock = ResourseTrand(GameTime.GameDate())
 
-Players = PlayersClass()
+Players = PlayersClass(10)
 
 demon = threading.Thread(target=GameTimeTransfer)
 demon.daemon = True
@@ -44,7 +45,6 @@ def welcome(): return render_template("welcome.html")
 
 @app.route("/start.html")
 def start():
-    GameTime.Start()
     return render_template("index.html")
 
 @app.route("/middle.html")
@@ -54,27 +54,47 @@ def left(): return render_template("left.html")
 @app.route("/right.html")
 def right(): return render_template("right.html")
 
-@app.route('/favicon.ico') 
-def favicon(): 
+@app.route('/favicon.ico')
+def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route("/get_market", methods=["POST"])
 def get_market():
-    money = Money.getTrand()
+    gold = Gold.getTrand()
     wood = Wood.getTrand()
     rock = Rock.getTrand()
-    Graphs.NewElement(money, wood, rock, GameTime.GameDateMini(), GameTime.GameDate())
-    print("MONEY:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(money, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
-    return jsonify({"money": str(money), "wood": str(wood), "rock": str(rock)})
+    Graphs.NewElement(gold, wood, rock, GameTime.GameDateMini(), GameTime.GameDate())
+    print("GOLD:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(gold, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
+    return jsonify({"money": str(gold), "wood": str(wood), "rock": str(rock)})
 
-@app.route("/get_graph", methods=["POST"])
-def new_graph(): return jsonify({"graph": str(Graphs.GetActualGraph())})
+@app.route("/get_graph", methods=["GET"])
+def new_graph(): 
+    data = Graphs.GetActualGraph()
+    return f"data:image/png;base64,{data}"
+
 @app.route("/get_gametime", methods=["POST"])
-def get_gametime(): 
+def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
+
+@app.route("/user_status_or_trade", methods=["POST"])
+def Trade():
     login = request.form.get("login")
     password = request.form.get("password")
-    print(login, password)
-    return jsonify({"gametime": GameTime.GameDateTime()})
+    typeRequest = request.form.get("type")
+    RequestPlayer = Players.getPlayerForName(login)
+
+    if(typeRequest == "trade"):
+        typeResource = request.form.get("typeResource")
+        typeTransaction = request.form.get("typeTransaction")
+        Quantity = request.form.get("Quantity")
+        if(typeResource == "Gold"): Price = Gold.getTrand()
+        elif(typeResource == "Wood"): Price = Wood.getTrand()
+        elif(typeResource == "Rock"): Price = Rock.getTrand()
+
+        Players.TradingWithMarket(login, typeTransaction, typeResource, int(Quantity), Price)
+    return jsonify({"Money": Players.getPlayerForName(login).Money,
+                    "Gold": Players.getPlayerForName(login).Gold,
+                    "Wood": Players.getPlayerForName(login).Wood,
+                    "Rock": Players.getPlayerForName(login).Rock})
 
 @app.route("/login", methods=["POST"])
 def Login():
