@@ -64,7 +64,7 @@ def get_market():
     wood = Wood.getTrand()
     rock = Rock.getTrand()
     Graphs.NewElement(gold, wood, rock, GameTime.GameDateMini(), GameTime.GameDate())
-    print("GOLD:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(gold, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
+    #print("GOLD:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(gold, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
     return jsonify({"money": str(gold), "wood": str(wood), "rock": str(rock)})
 
 @app.route("/get_graph", methods=["GET"])
@@ -74,6 +74,14 @@ def new_graph():
 
 @app.route("/get_gametime", methods=["POST"])
 def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
+
+@app.route("/get_table_online", methods=["POST"])
+def get_table_online(): 
+    return jsonify({"status": Players.getStatusAllPlayers()})
+
+@app.route("/get_actual_log", methods=["POST"])
+def get_actual_log(): 
+    return jsonify({"log": Players.LogRead(5)})
 
 @app.route("/user_status_or_trade", methods=["POST"])
 def Trade():

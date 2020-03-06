@@ -5,7 +5,7 @@
 import base64
 from io import BytesIO
 
-import time, threading
+import time, threading 
 import random, os, MySQLdb
 import matplotlib as mpl
 import matplotlib.pyplot as plt, mpld3
@@ -25,6 +25,10 @@ class GraphsClass():
         self.base = MySQLdb.connect("192.168.32.10","platon","maker","WarTrade")
         self.cursor = self.base.cursor()
         self.cursor.execute("TRUNCATE TABLE ResourcesTrend")
+
+        self.buf = BytesIO()
+        self.fig.savefig(self.buf, format="png")
+        self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
 
         os.system("rm -f /home/pi/demons/WarTrade/static/graphs/*")
 
@@ -54,10 +58,9 @@ class GraphsClass():
             plt.ylabel('Цена')
 
             #self.fig.savefig('static/graphs/'+str(self.number_of_graphs)+'.png')
+            self.buf = BytesIO()
+            self.fig.savefig(self.buf, format="png")
+            self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
     def GetActualGraph(self):
-        self.buf = BytesIO()
-        self.fig.savefig(self.buf, format="png")
-        self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
         return self.data
-        #return self.number_of_graphs
 

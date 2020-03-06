@@ -20,8 +20,8 @@ class ResourseTrand():
             self.r = random.random() * 4
             self.current_price = int((self.current_price + (self.target - self.current_price)/
                                  (self.rate_change/2 + (random.random() * self.rate_change)/2)) + random.random() * self.r/2 - self.r)
-            if(self.current_price > 100): self.current_price = 100 - random.randint(0, 5) 
-            elif(self.current_price < 0): self.current_price = 0 + random.randint(0, 5) 
+            if(self.current_price > 99): self.current_price = 100 - random.randint(0, 5) 
+            elif(self.current_price < 1): self.current_price = 0 + random.randint(0, 5) 
             if(abs(self.current_price-self.target)/self.target < 0.1):
                 self.target = random.randint(1, self.maximum_price)
             while(self.Date == this_day): pass
