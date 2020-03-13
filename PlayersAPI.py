@@ -26,8 +26,8 @@ class Player():
                                                                                 self.online, self.Money, self.Gold,
                                                                                 self.Wood, self.Rock)
 
-class PlayersClass(Log):
-    def __init__(self, LifeTax=10, *Players): 
+class PlayersClass(LogClass):
+    def __init__(self, LifeTax=10, clear_users_table=False, *Players): 
         super().__init__()
         self.Players = [i for i in Players]
         self.Date = ""
@@ -40,19 +40,24 @@ class PlayersClass(Log):
         self.cursor.execute("SET SESSION collation_connection = 'utf8_general_ci'")
         self.base.commit()
 
-        self.cursor.execute("SELECT name, password, ip, online, money, gold, wood, rock FROM Players")
-        for i in range(self.cursor.rowcount):
-            self.line = self.cursor.fetchone()
-            self.Players.append(Player(name=self.line[0], password=self.line[1], address=self.line[2], 
-                                        Online=self.line[3], Money=int(self.line[4]), Gold=int(self.line[5]),
-                                         Wood=int(self.line[6]), Rock=int(self.line[7])))
+        if(not clear_users_table):
+            self.cursor.execute("SELECT name, password, ip, online, money, gold, wood, rock FROM Players")
+            for i in range(self.cursor.rowcount):
+                self.line = self.cursor.fetchone()
+                self.Players.append(Player(name=self.line[0], password=self.line[1], address=self.line[2], 
+                                            Online=self.line[3], Money=int(self.line[4]), Gold=int(self.line[5]),
+                                             Wood=int(self.line[6]), Rock=int(self.line[7])))
+        else:
+            self.cursor.execute("TRUNCATE TABLE Players")
 
-        print((lambda x: "\nИз базы данных были подчитанны следующие пользователи:\n"+self.__str__() if(x>0) 
-                else "\nВ базе данных не было обнаруженно пользователей\n")(len(self.Players)))
+        print((lambda x: "\nИз базы данных были подчитанны следующие пользователи:\n"+self.__str__() 
+                if(x>0 and not clear_users_table) 
+                else ("\nВ базе данных не было обнаруженно пользователей\n" if(x==0 and not clear_users_table)
+                else "\nТаблица пользователей была очищенна в соответсвии с параметром запуска!\n"))(len(self.Players)))
         self.Start()
 
     def append(self, Player): 
-        self.LogWrite("К игре присоеденился новый игрок - {}".format(Player.name), color="blue")
+        #self.LogWrite("К игре присоеденился новый игрок - {}".format(Player.name), color="blue")
         self.appendUserToDatabase(Player)
         self.Players.append(Player)
 
@@ -84,10 +89,11 @@ class PlayersClass(Log):
         self.base.commit()
 
     def updateDatabase(self, Name):
+        #self.cursor.close() 
+        #self.cursor = self.base.cursor() 
         self.Player = self.getPlayerForName(Name)
         self.cursor.execute("""UPDATE Players SET ip='{2}', online='{3}', money='{4}', gold='{5}', wood='{6}', rock='{7}' WHERE NAME='{0}' AND PASSWORD='{1}';"""
-                            .format(self.Player.name, self.Player.password, self.Player.ip, self.Player.online, 
-                                    str(self.Player.Money), str(self.Player.Gold), str(self.Player.Wood), str(self.Player.Rock)))
+            .format(self.Player.name, self.Player.password, self.Player.ip, self.Player.online, str(self.Player.Money), str(self.Player.Gold), str(self.Player.Wood), str(self.Player.Rock)))
         self.base.commit()
 
     def __str__(self):

@@ -4,7 +4,7 @@
 
 from flask import Flask, render_template, send_file, request, jsonify, send_from_directory
 import os, subprocess, time, threading, subprocess
-import requests, logging, random
+import requests, logging, random, sys
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -34,7 +34,9 @@ Gold = ResourseTrand(GameTime.GameDate())
 Wood = ResourseTrand(GameTime.GameDate())
 Rock = ResourseTrand(GameTime.GameDate())
 
-Players = PlayersClass(10)
+Players = PlayersClass(10, sys.argv[1].find("--clear_users")!=-1 or sys.argv[1].find("-cu")!=-1)
+
+#Log = LogClass()
 
 demon = threading.Thread(target=GameTimeTransfer)
 demon.daemon = True
@@ -79,9 +81,12 @@ def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
 def get_table_online(): 
     return jsonify({"status": Players.getStatusAllPlayers()})
 
-@app.route("/get_actual_log", methods=["POST"])
-def get_actual_log(): 
-    return jsonify({"log": Players.LogRead(5)})
+@app.route("/log", methods=["POST"])
+def log(): 
+    #Log.LogWrite(request.form.get("message"), "message", request.form.get("login"))
+    if(request.form.get("type") == "1" or request.form.get("type") == "send"):
+        Players.LogWrite(request.form.get("message"), "message", request.form.get("login"))
+    return jsonify({"log": Players.LogRead(30)})
 
 @app.route("/user_status_or_trade", methods=["POST"])
 def Trade():
