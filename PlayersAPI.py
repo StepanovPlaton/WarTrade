@@ -90,7 +90,7 @@ class PlayersClass(LogClass):
 
     def updateDatabase(self, Name):
         #self.cursor.close() 
-        #self.cursor = self.base.cursor() 
+        self.cursor = self.base.cursor() 
         self.Player = self.getPlayerForName(Name)
         self.cursor.execute("""UPDATE Players SET ip='{2}', online='{3}', money='{4}', gold='{5}', wood='{6}', rock='{7}' WHERE NAME='{0}' AND PASSWORD='{1}';"""
             .format(self.Player.name, self.Player.password, self.Player.ip, self.Player.online, str(self.Player.Money), str(self.Player.Gold), str(self.Player.Wood), str(self.Player.Rock)))

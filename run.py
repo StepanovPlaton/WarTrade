@@ -34,7 +34,7 @@ Gold = ResourseTrand(GameTime.GameDate())
 Wood = ResourseTrand(GameTime.GameDate())
 Rock = ResourseTrand(GameTime.GameDate())
 
-Players = PlayersClass(10, sys.argv[1].find("--clear_users")!=-1 or sys.argv[1].find("-cu")!=-1)
+Players = PlayersClass(10, (lambda x: False if(x==1) else sys.argv[1].find("--clear_users")!=-1 or sys.argv[1].find("-cu")!=-1)(len(sys.argv)))
 
 #Log = LogClass()
 
@@ -60,33 +60,34 @@ def right(): return render_template("right.html")
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route("/get_market", methods=["POST"])
+@app.route("/get_market_and_table_online_and_gametime", methods=["POST"])
 def get_market():
     gold = Gold.getTrand()
     wood = Wood.getTrand()
     rock = Rock.getTrand()
     Graphs.NewElement(gold, wood, rock, GameTime.GameDateMini(), GameTime.GameDate())
     #print("GOLD:{0}, WOOD:{1}, ROCK:{2}, TIME - {3}, DATE - {4}".format(gold, wood, rock, GameTime.GameTime(), GameTime.GameDate()))
-    return jsonify({"money": str(gold), "wood": str(wood), "rock": str(rock)})
+    return jsonify({"money": str(gold), "wood": str(wood), "rock": str(rock),
+                    "status": Players.getStatusAllPlayers(),
+                    "gametime": GameTime.GameDateTime()})
 
 @app.route("/get_graph", methods=["GET"])
 def new_graph(): 
     data = Graphs.GetActualGraph()
     return f"data:image/png;base64,{data}"
 
-@app.route("/get_gametime", methods=["POST"])
-def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
+#@app.route("/get_gametime", methods=["POST"])
+#def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
 
-@app.route("/get_table_online", methods=["POST"])
-def get_table_online(): 
-    return jsonify({"status": Players.getStatusAllPlayers()})
+#@app.route("/get_table_online", methods=["POST"])
+#def get_table_online(): return jsonify({"status": Players.getStatusAllPlayers()})
 
 @app.route("/log", methods=["POST"])
 def log(): 
     #Log.LogWrite(request.form.get("message"), "message", request.form.get("login"))
     if(request.form.get("type") == "1" or request.form.get("type") == "send"):
         Players.LogWrite(request.form.get("message"), "message", request.form.get("login"))
-    return jsonify({"log": Players.LogRead(30)})
+    return jsonify({"log": Players.LogRead(10)})
 
 @app.route("/user_status_or_trade", methods=["POST"])
 def Trade():
