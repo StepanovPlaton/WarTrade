@@ -4,29 +4,42 @@
 
 import MySQLdb
 
-class LogClass():
-    def __init__(self, ip="192.168.32.10"):
-        self.base = MySQLdb.connect(ip,"platon","maker","WarTrade", use_unicode=True, charset="utf8")
-        self.cursor = self.base.cursor()
+class DataBaseAPI():
+    def __init__(self, ip="192.168.32.10", len=50):
+        self.ip_default = ip
     def LogWrite(self, message, type_message="system", user="system", color="black", text_type="normal", look="TRUE", quiet=False):
-        #self.cursor.close() 
-        self.cursor = self.base.cursor() 
-        self.cursor.execute("""INSERT INTO Log(message, type, user, color, text_type, look)
-                                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')"""
-                                .format(message, type_message, user, color, text_type, look))
-        self.base.commit()
-        if(not quiet): print("{0} {1} {2} {3} {4}".format(message, type_message, user, color, text_type))
+        self.Execute("""INSERT INTO Log(message, type, user, color, text_type, look)
+                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')"""
+                        .format(message, type_message, user, color, text_type, look))
+        if(not quiet): 
+            print("{0} {1} {2} {3} {4}".format(message, type_message, user, color, text_type))
 
-    def LogRead(self, len=10, admin="FALSE", reverse=True):
-        #self.cursor.close() 
-        
-        self.cursor.execute("SELECT message, type, color, text_type FROM Log"+
-                            (lambda x: " WHERE look='TRUE'" if(admin=="FALSE") else " ") (type)
-                            + " ORDER BY id desc LIMIT {0};".format(len))
-        return (lambda x: (self.cursor.fetchall())[::-1] if(x) else self.cursor.fetchall())(reverse)
-        self.cursor = self.base.cursor() 
-        #out = [self.cursor.fetchone() for i in range(len)]
-        #return (lambda x: tuple(out.reverse()) if(x) else tuple(out))(reverse)
+    def LogRead(self, len=10, admin="FALSE", reverse=True, quiet=False):
+        return_value = self.Execute("SELECT message, type, user, color, text_type FROM Log"+
+                                    (lambda x: " WHERE look='TRUE'" if(admin=="FALSE") else " ") (type)
+                                    + " ORDER BY id desc LIMIT {0};".format(len))
+        return (lambda x: return_value[::-1] if(x) else return_value)(reverse)
+
+    def Execute(self, command, quiet=False, ip="192.168.32.10"):
+        base = MySQLdb.connect(ip,"platon","maker","WarTrade", use_unicode=True, charset="utf8")
+        return_value = None
+        try:
+            cursor = base.cursor()
+            cursor.execute(command)
+            if(command.lower().find("select") != -1):
+                return_value = cursor.fetchall()
+            cursor.close()
+            base.commit()
+        except BaseException as e: 
+            if(not quiet): 
+                print("! ERROR ! Command -", command)
+                print("Transaction failed, rolling back")
+            base.rollback()
+        return return_value
+
+    def ClearLogTable(self, quiet=False):
+        if(not quiet): print("\nТаблица лога была очищенна в соответсвии с параметром запуска!")
+        self.Execute("TRUNCATE TABLE Log")
 
     def __str__(self):
         out = ""

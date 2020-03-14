@@ -34,9 +34,14 @@ Gold = ResourseTrand(GameTime.GameDate())
 Wood = ResourseTrand(GameTime.GameDate())
 Rock = ResourseTrand(GameTime.GameDate())
 
-Players = PlayersClass(10, (lambda x: False if(x==1) else sys.argv[1].find("--clear_users")!=-1 or sys.argv[1].find("-cu")!=-1)(len(sys.argv)))
+clear_log = False
+clear_users = False
 
-#Log = LogClass()
+for i in sys.argv:
+    if(i.find("--clear_users") != -1 or i.find("-cu") != -1): clear_users = True
+    elif(i.find("--clear_log") != -1 or i.find("-cl") != -1): clear_log = True
+
+Players = PlayersClass(10, clear_users, clear_log)
 
 demon = threading.Thread(target=GameTimeTransfer)
 demon.daemon = True
@@ -76,15 +81,8 @@ def new_graph():
     data = Graphs.GetActualGraph()
     return f"data:image/png;base64,{data}"
 
-#@app.route("/get_gametime", methods=["POST"])
-#def get_gametime(): return jsonify({"gametime": GameTime.GameDateTime()})
-
-#@app.route("/get_table_online", methods=["POST"])
-#def get_table_online(): return jsonify({"status": Players.getStatusAllPlayers()})
-
 @app.route("/log", methods=["POST"])
 def log(): 
-    #Log.LogWrite(request.form.get("message"), "message", request.form.get("login"))
     if(request.form.get("type") == "1" or request.form.get("type") == "send"):
         Players.LogWrite(request.form.get("message"), "message", request.form.get("login"))
     return jsonify({"log": Players.LogRead(10)})

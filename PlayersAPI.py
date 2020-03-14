@@ -26,9 +26,10 @@ class Player():
                                                                                 self.online, self.Money, self.Gold,
                                                                                 self.Wood, self.Rock)
 
-class PlayersClass(LogClass):
-    def __init__(self, LifeTax=10, clear_users_table=False, *Players): 
+class PlayersClass(DataBaseAPI):
+    def __init__(self, LifeTax=10, clear_users_table=False, clear_log_table=False, *Players): 
         super().__init__()
+        if(clear_log_table): self.ClearLogTable()
         self.Players = [i for i in Players]
         self.Date = ""
         self.LifeTax = LifeTax
@@ -82,19 +83,16 @@ class PlayersClass(LogClass):
         return returnStatus
 
     def appendUserToDatabase(self, Player):
-        self.cursor.execute("""INSERT INTO Players(name, password, ip, online, money, gold, wood, rock)
-                                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')"""
-                            .format(Player.name, Player.password, Player.ip, Player.online, 
-                                    str(Player.Money), str(Player.Gold), str(Player.Wood), str(Player.Rock)))
-        self.base.commit()
+        self.Execute("""INSERT INTO Players(name, password, ip, online, money, gold, wood, rock)
+                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')"""
+                        .format(Player.name, Player.password, Player.ip, Player.online, 
+                                str(Player.Money), str(Player.Gold), str(Player.Wood), str(Player.Rock)))
 
     def updateDatabase(self, Name):
-        #self.cursor.close() 
-        self.cursor = self.base.cursor() 
         self.Player = self.getPlayerForName(Name)
-        self.cursor.execute("""UPDATE Players SET ip='{2}', online='{3}', money='{4}', gold='{5}', wood='{6}', rock='{7}' WHERE NAME='{0}' AND PASSWORD='{1}';"""
-            .format(self.Player.name, self.Player.password, self.Player.ip, self.Player.online, str(self.Player.Money), str(self.Player.Gold), str(self.Player.Wood), str(self.Player.Rock)))
-        self.base.commit()
+        self.Execute("""UPDATE Players SET ip='{2}', online='{3}', money='{4}', gold='{5}', wood='{6}', rock='{7}' WHERE NAME='{0}' AND PASSWORD='{1}';"""
+                    .format(self.Player.name, self.Player.password, self.Player.ip, self.Player.online, str(self.Player.Money), str(self.Player.Gold), str(self.Player.Wood), str(self.Player.Rock)))
+
 
     def __str__(self):
         for i in self.Players:
