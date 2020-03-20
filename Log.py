@@ -20,8 +20,8 @@ class DataBaseAPI():
                                     + " ORDER BY id desc LIMIT {0};".format(len))
         return (lambda x: return_value[::-1] if(x) else return_value)(reverse)
 
-    def Execute(self, command, quiet=False, ip="192.168.32.10"):
-        base = MySQLdb.connect(ip,"platon","maker","WarTrade", use_unicode=True, charset="utf8")
+    def Execute(self, command, quiet=False, ip="default"):
+        base = MySQLdb.connect((lambda x: self.ip_default if(x=="default") else ip)(ip),"platon","maker","WarTrade", use_unicode=True, charset="utf8")
         return_value = None
         try:
             cursor = base.cursor()

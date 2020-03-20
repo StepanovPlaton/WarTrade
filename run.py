@@ -12,6 +12,8 @@ from GraphsForResourceToPNG import *
 from GameTimeDemon import *
 from ResourseTrand import *
 from PlayersAPI import *
+from TradeRequestPlayersListClass import *
+from Log import *
 
 app = Flask(__name__, template_folder="templates")
 
@@ -26,6 +28,9 @@ def GameTimeTransfer():
         Wood.setGameDate(GameTime.GameDate())
         Rock.setGameDate(GameTime.GameDate())
         Players.setGameDate(GameTime.GameDate())
+        TradeRequestPlayersList.setGameDate(GameTime.GameDate())
+
+TradeRequestPlayersList = TradeRequestPlayersListClass()
 
 GameTime = GameTimeServerClass(k=4096)
 Graphs = GraphsClass(10)
@@ -33,6 +38,8 @@ Graphs = GraphsClass(10)
 Gold = ResourseTrand(GameTime.GameDate())
 Wood = ResourseTrand(GameTime.GameDate())
 Rock = ResourseTrand(GameTime.GameDate())
+
+Log = DataBaseAPI()
 
 clear_log = False
 clear_users = False
@@ -48,18 +55,7 @@ demon.daemon = True
 demon.start()
 
 @app.route("/")
-def welcome(): return render_template("welcome.html")
-
-@app.route("/start.html")
-def start():
-    return render_template("index.html")
-
-@app.route("/middle.html")
-def middle(): return render_template("middle.html")
-@app.route("/left.html")
-def left(): return render_template("left.html")
-@app.route("/right.html")
-def right(): return render_template("right.html")
+def welcome(): return render_template("index.html")
 
 @app.route('/favicon.ico')
 def favicon():
@@ -84,8 +80,45 @@ def new_graph():
 @app.route("/log", methods=["POST"])
 def log(): 
     if(request.form.get("type") == "1" or request.form.get("type") == "send"):
-        Players.LogWrite(request.form.get("message"), "message", request.form.get("login"))
-    return jsonify({"log": Players.LogRead(10)})
+        Log.LogWrite(request.form.get("message"), "message", request.form.get("login"))
+    return jsonify({"log": Players.LogRead(30)})
+
+@app.route("/get_tradeplayerlist", methods=["POST"])
+def get_tradeplayerlist():
+
+    if(request.form.get("type") == "approv"):
+        TradeRequest = (TradeRequestPlayersList.GetLine(request.form.get("id")))[0]
+        Player1 = Players.getIdPlayerForName(TradeRequest[2])
+        Player2 = Players.getIdPlayerForName(request.form.get("login"))
+
+        Players.setActive(request.form.get("login"))
+
+        if(TradeRequest[3] == "Sale"):
+            Player_tmp = Player1
+            Player1 = Player2
+            Player2 = Player_tmp
+
+        Players.Players[Player2].Money += TradeRequest[6]
+        Players.Players[Player1].Money -= TradeRequest[6]
+        if(TradeRequest[4] == "Gold"):
+            Players.Players[Player2].Gold -= TradeRequest[5]
+            Players.Players[Player1].Gold += TradeRequest[5]
+        elif(TradeRequest[4] == "Wood"):
+            Players.Players[Player2].Wood -= TradeRequest[5]
+            Players.Players[Player1].Wood += TradeRequest[5]
+        elif(TradeRequest[4] == "Rock"):
+            Players.Players[Player2].Rock -= TradeRequest[5]
+            Players.Players[Player1].Rock += TradeRequest[5]
+
+        TradeRequestPlayersList.DeleteLine(TradeRequest[0])
+
+        Log.LogWrite("Игрок {0} и игрок {1} заключили сделку на {2} монет"
+                    .format(Players.Players[Player1].name, Players.Players[Player2].name, TradeRequest[6]), "game")
+    elif(request.form.get("type") == "close"):
+        TradeRequestPlayersList.DeleteLine(request.form.get("id"))
+        Log.LogWrite("Игрок {0} отменил cвоё предложение"
+                    .format(request.form.get("login")), "game")
+    return jsonify({"tradeplayerlist": TradeRequestPlayersList.GetList()})
 
 @app.route("/user_status_or_trade", methods=["POST"])
 def Trade():
@@ -94,15 +127,22 @@ def Trade():
     typeRequest = request.form.get("type")
     RequestPlayer = Players.getPlayerForName(login)
 
-    if(typeRequest == "trade"):
+    Players.setActive(login)
+
+    if(typeRequest.find("trade") != -1):
         typeResource = request.form.get("typeResource")
         typeTransaction = request.form.get("typeTransaction")
         Quantity = request.form.get("Quantity")
+    if(typeRequest == "trade with market"):
         if(typeResource == "Gold"): Price = Gold.getTrand()
         elif(typeResource == "Wood"): Price = Wood.getTrand()
         elif(typeResource == "Rock"): Price = Rock.getTrand()
-
         Players.TradingWithMarket(login, typeTransaction, typeResource, int(Quantity), Price)
+    elif(typeRequest == "trade with players"):
+        Price = request.form.get("Price")
+        TradeRequestPlayersList.AppendToList(login, typeTransaction, typeResource, int(Quantity), int(Price))
+        Log.LogWrite("Игрок {0} выложил заявку на {1} монет"
+                    .format(request.form.get("login"), Price), "game")
     return jsonify({"Money": Players.getPlayerForName(login).Money,
                     "Gold": Players.getPlayerForName(login).Gold,
                     "Wood": Players.getPlayerForName(login).Wood,
