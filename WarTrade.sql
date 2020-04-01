@@ -31,7 +31,7 @@ CREATE TABLE `Log` (
   `text_type` text NOT NULL,
   `look` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `Log` (
 
 LOCK TABLES `Log` WRITE;
 /*!40000 ALTER TABLE `Log` DISABLE KEYS */;
-INSERT INTO `Log` VALUES (1,'Наступил новый день! Сегодня 20.03.2020','info','system','black','blod','TRUE'),(2,'К игре присоеденился новый игрок - Платон','system','system','blue','normal','TRUE'),(3,'Наступил новый день! Сегодня 21.03.2020','info','system','black','blod','TRUE'),(4,'Наступил новый день! Сегодня 22.03.2020','info','system','black','blod','TRUE'),(5,'Наступил новый день! Сегодня 23.03.2020','info','system','black','blod','TRUE'),(6,'Наступил новый день! Сегодня 24.03.2020','info','system','black','blod','TRUE'),(7,'Наступил новый день! Сегодня 25.03.2020','info','system','black','blod','TRUE'),(8,'Наступил новый день! Сегодня 26.03.2020','info','system','black','blod','TRUE'),(9,'Наступил новый день! Сегодня 27.03.2020','info','system','black','blod','TRUE'),(10,'Наступил новый день! Сегодня 28.03.2020','info','system','black','blod','TRUE'),(11,'Наступил новый день! Сегодня 29.03.2020','info','system','black','blod','TRUE'),(12,'Игрок Платон выложил заявку на 100 монет','game','system','black','normal','TRUE'),(13,'К игре присоеденился новый игрок - Платон2','system','system','blue','normal','TRUE'),(14,'Наступил новый день! Сегодня 30.03.2020','info','system','black','blod','TRUE'),(15,'Игрок Платон2 и игрок Платон заключили сделку на 100 монет','game','system','black','normal','TRUE'),(16,'Наступил новый день! Сегодня 31.03.2020','info','system','black','blod','TRUE'),(17,'Наступил новый день! Сегодня 01.04.2020','info','system','black','blod','TRUE'),(18,'Наступил новый день! Сегодня 02.04.2020','info','system','black','blod','TRUE'),(19,'Наступил новый день! Сегодня 03.04.2020','info','system','black','blod','TRUE'),(20,'Наступил новый день! Сегодня 04.04.2020','info','system','black','blod','TRUE'),(21,'Наступил новый день! Сегодня 05.04.2020','info','system','black','blod','TRUE'),(22,'Наступил новый день! Сегодня 06.04.2020','info','system','black','blod','TRUE'),(23,'Наступил новый день! Сегодня 07.04.2020','info','system','black','blod','TRUE'),(24,'Наступил новый день! Сегодня 08.04.2020','info','system','black','blod','TRUE'),(25,'Наступил новый день! Сегодня 09.04.2020','info','system','black','blod','TRUE'),(26,'Наступил новый день! Сегодня 10.04.2020','info','system','black','blod','TRUE'),(27,'Наступил новый день! Сегодня 11.04.2020','info','system','black','blod','TRUE'),(28,'Наступил новый день! Сегодня 12.04.2020','info','system','black','blod','TRUE'),(29,'Наступил новый день! Сегодня 13.04.2020','info','system','black','blod','TRUE'),(30,'Наступил новый день! Сегодня 14.04.2020','info','system','black','blod','TRUE'),(31,'Наступил новый день! Сегодня 15.04.2020','info','system','black','blod','TRUE'),(32,'Наступил новый день! Сегодня 16.04.2020','info','system','black','blod','TRUE'),(33,'Наступил новый день! Сегодня 17.04.2020','info','system','black','blod','TRUE'),(34,'Наступил новый день! Сегодня 18.04.2020','info','system','black','blod','TRUE'),(35,'Наступил новый день! Сегодня 19.04.2020','info','system','black','blod','TRUE'),(36,'Наступил новый день! Сегодня 20.04.2020','info','system','black','blod','TRUE'),(37,'Наступил новый день! Сегодня 21.04.2020','info','system','black','blod','TRUE'),(38,'Наступил новый день! Сегодня 22.04.2020','info','system','black','blod','TRUE'),(39,'Наступил новый день! Сегодня 23.04.2020','info','system','black','blod','TRUE'),(40,'Наступил новый день! Сегодня 24.04.2020','info','system','black','blod','TRUE'),(41,'Наступил новый день! Сегодня 25.04.2020','info','system','black','blod','TRUE'),(42,'Наступил новый день! Сегодня 26.04.2020','info','system','black','blod','TRUE'),(43,'Наступил новый день! Сегодня 27.04.2020','info','system','black','blod','TRUE'),(44,'Наступил новый день! Сегодня 28.04.2020','info','system','black','blod','TRUE'),(45,'Наступил новый день! Сегодня 29.04.2020','info','system','black','blod','TRUE'),(46,'Наступил новый день! Сегодня 30.04.2020','info','system','black','blod','TRUE'),(47,'Наступил новый день! Сегодня 01.05.2020','info','system','black','blod','TRUE'),(48,'Наступил новый день! Сегодня 02.05.2020','info','system','black','blod','TRUE'),(49,'Наступил новый день! Сегодня 03.05.2020','info','system','black','blod','TRUE'),(50,'Наступил новый день! Сегодня 04.05.2020','info','system','black','blod','TRUE'),(51,'Наступил новый день! Сегодня 05.05.2020','info','system','black','blod','TRUE'),(52,'Наступил новый день! Сегодня 06.05.2020','info','system','black','blod','TRUE'),(53,'Наступил новый день! Сегодня 07.05.2020','info','system','black','blod','TRUE'),(54,'Наступил новый день! Сегодня 08.05.2020','info','system','black','blod','TRUE'),(55,'Наступил новый день! Сегодня 09.05.2020','info','system','black','blod','TRUE'),(56,'Наступил новый день! Сегодня 10.05.2020','info','system','black','blod','TRUE'),(57,'Наступил новый день! Сегодня 11.05.2020','info','system','black','blod','TRUE'),(58,'Наступил новый день! Сегодня 12.05.2020','info','system','black','blod','TRUE'),(59,'Наступил новый день! Сегодня 13.05.2020','info','system','black','blod','TRUE'),(60,'Наступил новый день! Сегодня 14.05.2020','info','system','black','blod','TRUE'),(61,'Наступил новый день! Сегодня 15.05.2020','info','system','black','blod','TRUE'),(62,'Наступил новый день! Сегодня 16.05.2020','info','system','black','blod','TRUE'),(63,'Наступил новый день! Сегодня 17.05.2020','info','system','black','blod','TRUE'),(64,'Наступил новый день! Сегодня 18.05.2020','info','system','black','blod','TRUE'),(65,'Наступил новый день! Сегодня 19.05.2020','info','system','black','blod','TRUE'),(66,'Наступил новый день! Сегодня 20.05.2020','info','system','black','blod','TRUE'),(67,'Наступил новый день! Сегодня 21.05.2020','info','system','black','blod','TRUE'),(68,'Наступил новый день! Сегодня 22.05.2020','info','system','black','blod','TRUE'),(69,'Наступил новый день! Сегодня 23.05.2020','info','system','black','blod','TRUE'),(70,'Наступил новый день! Сегодня 24.05.2020','info','system','black','blod','TRUE'),(71,'Наступил новый день! Сегодня 25.05.2020','info','system','black','blod','TRUE'),(72,'Наступил новый день! Сегодня 26.05.2020','info','system','black','blod','TRUE'),(73,'Наступил новый день! Сегодня 27.05.2020','info','system','black','blod','TRUE'),(74,'Наступил новый день! Сегодня 28.05.2020','info','system','black','blod','TRUE'),(75,'Наступил новый день! Сегодня 29.05.2020','info','system','black','blod','TRUE'),(76,'Наступил новый день! Сегодня 30.05.2020','info','system','black','blod','TRUE'),(77,'В игру вошёл Платон2','system','system','green','normal','TRUE');
+INSERT INTO `Log` VALUES (1,'К игре присоеденился новый игрок - ','system','system','blue','normal','TRUE'),(2,'В игру вошёл ','system','system','green','normal','TRUE');
 /*!40000 ALTER TABLE `Log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS `Players`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Players` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `sid` text DEFAULT NULL,
   `name` text NOT NULL,
   `password` text NOT NULL,
   `ip` text NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE `Players` (
   `wood` text NOT NULL,
   `rock` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +72,7 @@ CREATE TABLE `Players` (
 
 LOCK TABLES `Players` WRITE;
 /*!40000 ALTER TABLE `Players` DISABLE KEYS */;
-INSERT INTO `Players` VALUES (1,'Платон','12345','192.168.32.16','Online','635','7','5','5'),(2,'Платон2','123','192.168.32.16','Online','425','9','5','5');
+INSERT INTO `Players` VALUES (1,'None','','','192.168.32.16','Online','487','6','8','4');
 /*!40000 ALTER TABLE `Players` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +90,7 @@ CREATE TABLE `ResourcesTrend` (
   `wood` int(11) NOT NULL,
   `rock` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,6 +99,7 @@ CREATE TABLE `ResourcesTrend` (
 
 LOCK TABLES `ResourcesTrend` WRITE;
 /*!40000 ALTER TABLE `ResourcesTrend` DISABLE KEYS */;
+INSERT INTO `ResourcesTrend` VALUES (1,'02.04',31,38,8),(2,'03.04',30,37,7),(3,'04.04',28,36,5),(4,'05.04',28,36,3),(5,'06.04',28,36,2);
 /*!40000 ALTER TABLE `ResourcesTrend` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,7 +119,7 @@ CREATE TABLE `TradeRequestPlayersList` (
   `quantity` int(11) NOT NULL,
   `price` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=481 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,4 +140,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-20 10:56:05
+-- Dump completed on 2020-04-01  6:33:59
