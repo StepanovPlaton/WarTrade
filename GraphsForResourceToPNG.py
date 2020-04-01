@@ -32,35 +32,33 @@ class GraphsClass():
 
         os.system("rm -f /home/pi/demons/WarTrade/static/graphs/*")
 
-    def NewElement(self, gold, wood, rock, DateMini, DateFull):
-        if(DateMini != self.dates[len(self.dates)-1]):
-            self.gold.append(gold)
-            self.gold.pop(0)
-            self.wood.append(wood)
-            self.wood.pop(0)
-            self.rock.append(rock)
-            self.rock.pop(0)
-            self.dates.append(DateMini)
-            self.dates.pop(0)
+    def NewElement(self, gold, wood, rock, DateMini):
+        self.gold.append(gold)
+        self.gold.pop(0)
+        self.wood.append(wood)
+        self.wood.pop(0)
+        self.rock.append(rock)
+        self.rock.pop(0)
+        self.dates.append(DateMini)
+        self.dates.pop(0)
 
-            self.cursor.execute("INSERT INTO ResourcesTrend(date, gold, wood, rock) VALUES ('{0}', '{1}', '{2}', '{3}')".format(DateFull, gold, wood, rock))
-            self.base.commit()
+        self.cursor.execute("INSERT INTO ResourcesTrend(date, gold, wood, rock) VALUES ('{0}', '{1}', '{2}', '{3}')".format(DateMini, gold, wood, rock))
+        self.base.commit()
 
-            self.number_of_graphs+=1
+        self.number_of_graphs+=1
 
-            plt.clf()
-            plt.plot(self.gold, color = 'orange', linestyle = 'solid', label = 'gold')
-            plt.plot(self.wood, color = 'green', linestyle = 'solid', label = 'wood')
-            plt.plot(self.rock, color = 'blue', linestyle = 'solid', label = 'rock')
-            xticks(range(self.len_history), self.dates)
-            #yticks(range(10), [(i+1)*10 for i in range(10)])
-            plt.xlabel('Дата')
-            plt.ylabel('Цена')
+        plt.clf()
+        plt.plot(self.gold, color = 'orange', linestyle = 'solid', label = 'gold')
+        plt.plot(self.wood, color = 'green', linestyle = 'solid', label = 'wood')
+        plt.plot(self.rock, color = 'blue', linestyle = 'solid', label = 'rock')
+        xticks(range(self.len_history), self.dates)
+        plt.xlabel('Дата')
+        plt.ylabel('Цена')
 
-            #self.fig.savefig('static/graphs/'+str(self.number_of_graphs)+'.png')
-            self.buf = BytesIO()
-            self.fig.savefig(self.buf, format="png")
-            self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
+        self.buf = BytesIO()
+        self.fig.savefig(self.buf, format="png")
+        self.data = base64.b64encode(self.buf.getbuffer()).decode("ascii")
+        return self.GetActualGraph()
     def GetActualGraph(self):
         return self.data
 

@@ -4,13 +4,13 @@
 
 import threading, datetime
 
-from Log import *
+from DataBaseAPIandLog import *
 
 class TradeRequestPlayersListClass(DataBaseAPI):
     def __init__(self, ip="192.168.32.10"):
         super().__init__()
         self.Date = "" 
-        self.Start()
+        self.changed = True
     def GetList(self, reverse=True): return self.GetTradeRequestPlayersList(reverse)
     def GetTradeRequestPlayersList(self, reverse=True):
         return_value = self.Execute("""SELECT id, date, name, type, resource, quantity, price 
@@ -23,6 +23,7 @@ class TradeRequestPlayersListClass(DataBaseAPI):
         self.Execute("""INSERT INTO TradeRequestPlayersList(date, name, type, resource, quantity, price)
                         VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')"""
                         .format(self.Date, name, type_, resource, quantity, int(price)))
+        self.changed = True
 
     def GetLine(self, id): return self.GetLineInTradeRequestPlayersList(id)
     def GetLineInTradeRequestPlayersList(self, id):
@@ -32,20 +33,15 @@ class TradeRequestPlayersListClass(DataBaseAPI):
     def DeleteLine(self, id): self.DeleteLineInTradeRequestPlayersList(id)
     def DeleteLineInTradeRequestPlayersList(self, id):
         self.Execute("""DELETE FROM TradeRequestPlayersList WHERE id={0}""".format(id))
-
-
-    def demon(self):
-        while 1:
-            self.this_day = self.Date
-            while(self.this_day == self.Date): pass
-            self.Date_tmp = self.Date.split(".")
-            self.Execute("""DELETE FROM TradeRequestPlayersList WHERE date='{0}';"""
-                            .format((datetime.datetime(int(self.Date_tmp[2]), int(self.Date_tmp[1]), int(self.Date_tmp[0])) - 
-                                    datetime.timedelta(days=3)).strftime("%d.%m.%Y")))
-    def Start(self):
-        demon = threading.Thread(target=self.demon)
-        demon.daemon = True
-        demon.start()
+        self.changed = True
 
     def setGameDate(self, date):
         self.Date = date
+        self.Date_tmp = self.Date.split(".")
+        self.Execute("""DELETE FROM TradeRequestPlayersList WHERE date='{0}';"""
+                    .format((datetime.datetime(int(self.Date_tmp[2]), int(self.Date_tmp[1]), int(self.Date_tmp[0])) - 
+                            datetime.timedelta(days=3)).strftime("%d.%m.%Y")))
+        self.changed = True
+
+    def getChanged(self): return self.changed
+    def setChanged(self, in_): self.changed = in_
